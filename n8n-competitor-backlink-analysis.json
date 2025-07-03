@@ -1,0 +1,157 @@
+{
+  "name": "Competitor Backlink Analysis",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manualTrigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "competitor_url",
+              "value": "https://www.fivefingersexports.com/"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setCompetitorUrl",
+      "name": "Set competitor_url",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const url = $json.competitor_url;\nconst match = url.match(/https?:\\/\\/(www\\.)?([^/]+)/);\nitem.clean_domain = match ? match[2] : '';\nreturn item;"
+      },
+      "id": "extractDomain",
+      "name": "Extract Domain",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search",
+        "method": "GET",
+        "queryParametersUi": {
+          "parameter": [
+            { "name": "engine", "value": "google" },
+            { "name": "q", "value": "={{$json.clean_domain}}" },
+            { "name": "api_key", "value": "YOUR_SERPAPI_KEY" },
+            { "name": "num", "value": "100" },
+            { "name": "gl", "value": "us" },
+            { "name": "hl", "value": "en" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "serpApiRequest",
+      "name": "SerpAPI Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const data = items[0].json;\nlet organic = [];\ntry {\n  organic = data.organic_results || [];\n} catch (e) {}\nreturn organic.map(result => ({ json: result }));"
+      },
+      "id": "parseOrganicResults",
+      "name": "Parse Organic Results",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1000, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1
+      },
+      "id": "splitInBatches",
+      "name": "SplitInBatches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 1,
+      "position": [1200, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            { "name": "result_url", "value": "={{$json.link}}" },
+            { "name": "result_title", "value": "={{$json.title}}" },
+            { "name": "result_snippet", "value": "={{$json.snippet}}" },
+            { "name": "competitor_domain", "value": "={{$node[\"extractDomain\"].json[\"clean_domain\"]}}" },
+            { "name": "search_date", "value": "={{$now}}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "setResultFields",
+      "name": "Set Result Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [1400, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "sheet",
+        "operation": "append",
+        "sheetId": "sheet1",
+        "spreadsheetId": "YOUR_SPREADSHEET_ID",
+        "options": {},
+        "valueInputOption": "USER_ENTERED",
+        "data": [
+          "={{$json.result_url}}",
+          "={{$json.result_title}}",
+          "={{$json.result_snippet}}",
+          "={{$json.competitor_domain}}",
+          "={{$json.search_date}}"
+        ]
+      },
+      "id": "googleSheetsAddRow",
+      "name": "Google Sheets Add Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 3,
+      "position": [1600, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PLACEHOLDER_CREDENTIAL_ID",
+          "name": "Google Sheets Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{"node": "Set competitor_url", "type": "main", "index": 0}]]
+    },
+    "Set competitor_url": {
+      "main": [[{"node": "Extract Domain", "type": "main", "index": 0}]]
+    },
+    "Extract Domain": {
+      "main": [[{"node": "SerpAPI Request", "type": "main", "index": 0}]]
+    },
+    "SerpAPI Request": {
+      "main": [[{"node": "Parse Organic Results", "type": "main", "index": 0}]]
+    },
+    "Parse Organic Results": {
+      "main": [[{"node": "SplitInBatches", "type": "main", "index": 0}]]
+    },
+    "SplitInBatches": {
+      "main": [[{"node": "Set Result Fields", "type": "main", "index": 0}]]
+    },
+    "Set Result Fields": {
+      "main": [[{"node": "Google Sheets Add Row", "type": "main", "index": 0}]]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "CompetitorBacklinkAnalysis"
+} 
