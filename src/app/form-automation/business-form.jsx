@@ -1,12 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Button } from "../../components/ui/button.jsx"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.jsx"
+import { Input } from "../../components/ui/input.jsx"
+import { Label } from "../../components/ui/label.jsx"
+import { Badge } from "../../components/ui/badge.jsx"
 import { Loader2, Building2, Globe, Mail, Phone, MapPin, Clock, Tag, CheckCircle, AlertCircle } from "lucide-react"
 
 export default function BusinessForm() {
@@ -374,10 +373,10 @@ export default function BusinessForm() {
           </div>
 
           {error && (
-            <Alert className="mt-6 border-red-200 bg-red-50">
-              <AlertCircle className="h-4 w-4 text-red-600" />
-              <AlertDescription className="text-red-800">{error}</AlertDescription>
-            </Alert>
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+              <h3 className="font-semibold mb-2 text-red-800">Error:</h3>
+              <p className="text-red-800">{error}</p>
+            </div>
           )}
 
           <div className="mt-8 flex justify-center">

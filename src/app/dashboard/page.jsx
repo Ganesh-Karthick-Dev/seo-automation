@@ -11,17 +11,24 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '../../components/ui/dropdown-menu'
 import { FaLink, FaRobot, FaWpforms } from "react-icons/fa";
+import { FaRankingStar, FaTicketSimple } from "react-icons/fa6";
+import { ImListNumbered } from "react-icons/im";
+
+
 
 
 // Import the dashboard components
-import DashboardContent from '@/components/dashboard/DashboardContent'
-import HiringOnboarding from '@/components/dashboard/HiringOnboarding'
-import HRCore from '@/components/dashboard/HRCore'
-import BusinessForm from '../form-automation/business-form'
-import HighQualityLinksPage from '../high-quality-links/page'
-import CompetitorLinksPage from '../competitor-links/page'
+import DashboardContent from '../../components/dashboard/DashboardContent.jsx'
+import HiringOnboarding from '../../components/dashboard/HiringOnboarding.jsx'
+import HRCore from '../../components/dashboard/HRCore.jsx'
+import BusinessForm from '../form-automation/business-form.jsx'
+import HighQualityLinksPage from '../high-quality-links/page.jsx'
+import CompetitorLinksPage from '../competitor-links/page.jsx'
+import KeywordRankingPage from '../keyword-ranking/page.jsx'
+import MetaAndKeywordPage from '../metaandkeyword/page'
+import KeywordCountPage from '../keywordcount/page'
 
 function HighQualityBacklinksForm() {
   const [keyword, setKeyword] = useState('');
@@ -141,7 +148,10 @@ const Dashboard = () => {
   const sidebarItems = [
     { name: 'Form Automation', icon: <FaWpforms /> },
     { name: 'High Quality Backlinks', icon: <FaLink /> },
-    { name: 'Competitor Links', icon: <FaLink /> }
+    { name: 'Competitor Links', icon: <FaLink /> },
+    {name : "Keyword Ranking",icon : <FaRankingStar />},
+    {name : "meta title & description",icon : <FaTicketSimple />},
+    {name : "Keyword Count",icon : <ImListNumbered />}
   ]
 
   // Handle sidebar item click
@@ -199,6 +209,12 @@ const Dashboard = () => {
         return <HighQualityLinksPage />
       case 'Competitor Links':
         return <CompetitorLinksPage />
+      case 'Keyword Ranking':
+        return <KeywordRankingPage />
+      case 'meta title & description':
+        return <MetaAndKeywordPage />
+      case 'Keyword Count':
+        return <KeywordCountPage />
       default:
         return (
           <div className="flex-1 p-6">
@@ -229,7 +245,7 @@ const Dashboard = () => {
            <div className="flex items-center">
            <FaRobot className='text-2xl text-blue-500' />
              {!isCollapsed && (
-               <span className="ml-3 text-xl font-bold text-gray-800 whitespace-nowrap">SEO Automation</span>
+               <span className="ml-3 text-xl font-bold text-gray-800 whitespace-nowrap">SEO Automations</span>
              )}
            </div>
          </div>

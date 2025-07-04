@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { Eye, EyeOff } from 'lucide-react'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
+import { Button } from '../ui/button.jsx'
+import { Input } from '../ui/input.jsx'
 
 // Validation schema
 const signupSchema = z.object({

@@ -6,9 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import toast from 'react-hot-toast'
 import { Eye, EyeOff, Check } from 'lucide-react'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
+import { Button } from '../ui/button.jsx'
+import { Input } from '../ui/input.jsx'
+import { Label } from '../ui/label.jsx'
 
 // Validation schema
 const loginSchema = z.object({
