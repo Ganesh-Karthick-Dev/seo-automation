@@ -343,7 +343,7 @@ const Dashboard = () => {
                    <span className="text-white text-sm font-medium">S</span>
                  </button>
                </DropdownMenuTrigger>
-               {/* <DropdownMenuContent align="end" className="w-56">
+               <DropdownMenuContent align="end" className="w-56">
                  <DropdownMenuLabel className="font-normal">
                    <div className="flex flex-col space-y-1">
                      <p className="text-sm font-medium leading-none">Admin User</p>
@@ -352,15 +352,15 @@ const Dashboard = () => {
                      </p>
                    </div>
                  </DropdownMenuLabel>
-                 <DropdownMenuSeparator />
-                 <DropdownMenuItem className="cursor-pointer">
+                 {/* <DropdownMenuSeparator /> */}
+                 {/* <DropdownMenuItem className="cursor-pointer">
                    <User className="mr-2 h-4 w-4" />
                    <span>Profile</span>
                  </DropdownMenuItem>
                  <DropdownMenuItem className="cursor-pointer">
                    <Settings className="mr-2 h-4 w-4" />
                    <span>Settings</span>
-                 </DropdownMenuItem>
+                 </DropdownMenuItem> */}
                  <DropdownMenuSeparator />
                  <DropdownMenuItem 
                    className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50 disabled:opacity-50"
@@ -374,7 +374,7 @@ const Dashboard = () => {
                    )}
                    <span>{isLoggingOut ? 'Logging out...' : 'Logout'}</span>
                  </DropdownMenuItem>
-               </DropdownMenuContent> */}
+               </DropdownMenuContent>
              </DropdownMenu>
            </div>
          </div>

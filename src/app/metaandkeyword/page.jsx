@@ -29,7 +29,7 @@ export default function MetaAndKeywordPage() {
 
     try {
       const apiResponse = await fetch(
-        "https://webnoxdigital.app.n8n.cloud/webhook-test/2edf87fb-6f9d-498c-97fc-d4e51773ea22",
+        "https://webnoxdigital.app.n8n.cloud/webhook/2edf87fb-6f9d-498c-97fc-d4e51773ea22",
         {
           method: "POST",
           headers: {

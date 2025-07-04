@@ -5,11 +5,23 @@ import React, { useState } from 'react'
 const HighQualityLinksPage = () => {
   const [keyword, setKeyword] = useState('');
   const [suffix, setSuffix] = useState('');
+  const [documentUrl, setDocumentUrl] = useState('');
+  const [sheetUrl, setSheetUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
 
+  // Validation function to check if all fields are filled
+  const isFormValid = () => {
+    return keyword.trim() !== '' && 
+           suffix.trim() !== '' && 
+           documentUrl.trim() !== '' && 
+           sheetUrl.trim() !== '';
+  };
+
   const handleSubmit = async () => {
+    if (!isFormValid()) return;
+    
     setLoading(true);
     setResult(null);
     setError(null);
@@ -18,7 +30,12 @@ const HighQualityLinksPage = () => {
       const response = await fetch('https://webnoxdigital.app.n8n.cloud/webhook/84886abd-b519-487c-9515-edb3cf05b9d7', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ keyword, suffix: suffixArray })
+        body: JSON.stringify({ 
+          keyword, 
+          suffix: suffixArray,
+          documentUrl,
+          sheetUrl
+        })
       });
       console.log(`epic response - `,response);
       
@@ -49,20 +66,46 @@ const HighQualityLinksPage = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 mb-1 font-medium">Suffix <span className='text-xs text-gray-400'>(comma separated for multiple)</span></label>
+            <label className="block text-gray-700 mb-1 font-medium">Suffix <span className='text-xs text-gray-400'></span></label>
             <input
               type="text"
               value={suffix}
               onChange={e => setSuffix(e.target.value)}
               className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter suffix (e.g. com, org, net)"
+              placeholder="Enter suffix (e.g. blog, forum, article)"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 mb-1 font-medium">Document URL</label>
+            <input
+              type="url"
+              value={documentUrl}
+              onChange={e => setDocumentUrl(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter document URL"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 mb-1 font-medium">Sheet URL</label>
+            <input
+              type="url"
+              value={sheetUrl}
+              onChange={e => setSheetUrl(e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter sheet URL"
               required
             />
           </div>
           <button
             type="button"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition disabled:opacity-60"
-            disabled={loading}
+            className={`w-full font-semibold py-2 rounded transition ${
+              isFormValid() && !loading
+                ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            disabled={!isFormValid() || loading}
             onClick={handleSubmit}
           >
             {loading ? 'Submitting...' : 'Submit'}
