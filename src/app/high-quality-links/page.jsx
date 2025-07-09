@@ -27,7 +27,7 @@ const HighQualityLinksPage = () => {
     setError(null);
     try {
       const suffixArray = [suffix];
-      const response = await fetch('https://webnoxdigital.app.n8n.cloud/webhook/84886abd-b519-487c-9515-edb3cf05b9d7', {
+      const response = await fetch('https://webnoxdigital.app.n8n.cloud/webhook-test/84886abd-b519-487c-9515-edb3cf05b9d7', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
