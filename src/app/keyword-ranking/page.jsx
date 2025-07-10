@@ -5,6 +5,7 @@ import { Button } from "../../components/ui/button.jsx"
 import { Input } from "../../components/ui/input.jsx"
 import { Label } from "../../components/ui/label.jsx"
 import { Loader2, Send, CheckCircle, AlertCircle } from "lucide-react"
+import { saveAs } from "file-saver"
 
 export default function KeywordRankingPage() {
   // API form state
@@ -73,11 +74,36 @@ export default function KeywordRankingPage() {
     }
   }
 
+  // Function to download the template file as a blob
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await fetch("https://docs.google.com/spreadsheets/d/1hOkJw_u6r0Slpuk-maDdtoGj4vuAin4VI4CS9GiKI9M/export?format=xlsx", {
+        method: "GET",
+      })
+      if (!response.ok) throw new Error("Failed to download template file")
+      const blob = await response.blob()
+      // Use file-saver to trigger download
+      saveAs(blob, "Keyword_Ranking_Template.xlsx")
+    } catch (err) {
+      alert("Could not download the template file. Please try again later.")
+    }
+  }
+
   const isFormValid = formData.docURL.trim() !== "" && formData.sheetURL.trim() !== ""
 
   return (
     <div className="min-h-screen flex w-full items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow border border-gray-200">
+        {/* Download Template Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={handleDownloadTemplate}
+            className="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition shadow"
+          >
+            Download Template File
+          </button>
+        </div>
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Keyword Ranking API</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -123,10 +149,19 @@ export default function KeywordRankingPage() {
               <CheckCircle className="w-5 h-5 text-green-600 mr-2" />
               <span className="text-green-800 font-medium">Request Successful!</span>
             </div>
-            <div className="bg-gray-100 p-3 rounded text-sm">
-              <pre className="whitespace-pre-wrap overflow-auto max-h-40 text-gray-700">
-                {JSON.stringify(response, null, 2)}
-              </pre>
+            <div className=" p-3 rounded text-sm">
+              
+              {/* Add link to open response.sheet in new tab if present */}
+              {response.sheet && (
+                <a
+                  href={response.sheet}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-3 px-4 py-2 bg-blue-600 text-white font-semibold rounded hover:bg-blue-700 transition shadow"
+                >
+                  Open Sheet
+                </a>
+              )}
             </div>
           </div>
         )}

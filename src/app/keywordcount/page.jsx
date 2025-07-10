@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Loader2, CheckCircle, AlertCircle } from "lucide-react"
+import { saveAs } from "file-saver"
 
 export default function KeywordCountPage() {
   // API form state
@@ -70,11 +71,35 @@ export default function KeywordCountPage() {
     }
   }
 
+  // Function to download the template file as a blob
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await fetch("https://docs.google.com/spreadsheets/d/1Cnm3UA9aXQ1B0GRVLlHuau2R1I4uBsKzUTb3w5MC1Xk/export?format=xlsx", {
+        method: "GET",
+      })
+      if (!response.ok) throw new Error("Failed to download template file")
+      const blob = await response.blob()
+      saveAs(blob, "Keyword_Usage_Template.xlsx")
+    } catch (err) {
+      alert("Could not download the template file. Please try again later.")
+    }
+  }
+
   const isFormValid = formData.sheetURL.trim() !== "" && formData.documentURL.trim() !== ""
 
   return (
     <div className="min-h-screen flex w-full items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow border border-gray-200">
+        {/* Download Template Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={handleDownloadTemplate}
+            className="px-4 py-2 bg-green-600 text-white font-semibold rounded hover:bg-green-700 transition shadow"
+          >
+            Download Template File
+          </button>
+        </div>
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Keyword Counter</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
