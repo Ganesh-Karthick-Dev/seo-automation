@@ -6,6 +6,7 @@ import { Loader2, CheckCircle, AlertCircle } from "lucide-react"
 export default function KeywordCountPage() {
   // API form state
   const [formData, setFormData] = useState({
+    documentURL: "",
     sheetURL: "",
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -27,7 +28,7 @@ export default function KeywordCountPage() {
 
     try {
       const apiResponse = await fetch(
-        "https://webnoxdigital.app.n8n.cloud/webhook/6dc9afa6-11b0-4a55-b373-646f511d5612",
+        "https://webnoxdigital.app.n8n.cloud/webhook-test/6dc9afa6-11b0-4a55-b373-646f511d5612",
         {
           method: "POST",
           headers: {
@@ -69,7 +70,7 @@ export default function KeywordCountPage() {
     }
   }
 
-  const isFormValid = formData.sheetURL.trim() !== ""
+  const isFormValid = formData.sheetURL.trim() !== "" && formData.documentURL.trim() !== ""
 
   return (
     <div className="min-h-screen flex w-full items-center justify-center bg-gray-50">
@@ -77,6 +78,18 @@ export default function KeywordCountPage() {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Keyword Counter</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-700 mb-1 font-medium">Document URL</label>
+            <input
+              type="text"
+              value={formData.documentURL}
+              onChange={(e) => handleInputChange("documentURL", e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter document URL"
+              required
+              disabled={isLoading}
+            />
+          </div>
           <div>
             <label className="block text-gray-700 mb-1 font-medium">Sheet URL</label>
             <input
@@ -108,7 +121,7 @@ export default function KeywordCountPage() {
             </div>
             <div className="bg-gray-100 p-3 rounded text-sm">
               <pre className="whitespace-pre-wrap overflow-auto max-h-40 text-gray-700">
-                {JSON.stringify(response, null, 2)}
+                {response?.message}
               </pre>
             </div>
             {response.sheet && (

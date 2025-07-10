@@ -10,6 +10,7 @@ const HighQualityLinksPage = () => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [sheetLink, setSheetLink] = useState("");
 
   // Validation function to check if all fields are filled
   const isFormValid = () => {
@@ -27,7 +28,7 @@ const HighQualityLinksPage = () => {
     setError(null);
     try {
       const suffixArray = [suffix];
-      const response = await fetch('https://webnoxdigital.app.n8n.cloud/webhook-test/84886abd-b519-487c-9515-edb3cf05b9d7', {
+      const response = await fetch('https://webnoxdigital.app.n8n.cloud/webhook/84886abd-b519-487c-9515-edb3cf05b9d7', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -38,6 +39,9 @@ const HighQualityLinksPage = () => {
         })
       });
       console.log(`epic response - `,response);
+
+      const dataog = await response.json()
+      setSheetLink(dataog.sheet || "");
       
       if (!response.ok) throw new Error('Failed to submit');
       const data = await response.json().catch(() => ({}));
@@ -103,7 +107,7 @@ const HighQualityLinksPage = () => {
             className={`w-full font-semibold py-2 rounded transition ${
               isFormValid() && !loading
                 ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-blue-300 text-white cursor-not-allowed'
             }`}
             disabled={!isFormValid() || loading}
             onClick={handleSubmit}
@@ -114,14 +118,16 @@ const HighQualityLinksPage = () => {
         {result && <div className="mt-4 text-green-600 font-medium">{result}</div>}
         {error && <div className="mt-4 text-red-600 font-medium">{error}</div>}
         <div className="mt-6 text-center">
-          <a
-            href="https://docs.google.com/spreadsheets/d/1_21wzEuYQcKOJcb5i4AKQLfuqxS79lifkK1jXQIbdBo/edit?gid=0#gid=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline font-semibold"
-          >
-            Go to Sheet
-          </a>
+          {sheetLink && (
+            <a
+              href={sheetLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline font-semibold"
+            >
+              Go to Sheet
+            </a>
+          )}
         </div>
       </div>
     </div>

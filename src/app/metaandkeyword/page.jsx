@@ -6,6 +6,7 @@ import { Loader2, CheckCircle, AlertCircle } from "lucide-react"
 export default function MetaAndKeywordPage() {
   // API form state
   const [formData, setFormData] = useState({
+    documentURL: "",
     sheetURL: "",
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -39,30 +40,18 @@ export default function MetaAndKeywordPage() {
         },
       )
 
+      const data = await apiResponse.json();
+      console.log(`data - `,data);
+
       if (apiResponse.ok) {
-        // Check if there's a response body
-        const contentType = apiResponse.headers.get("content-type")
-
-        if (contentType && contentType.includes("application/json")) {
-          const data = await apiResponse.json()
-
-          // Check if it's an error response with status: false
-          if (data.status === false) {
-            setError(data.message || "Request failed")
-          } else {
-            // It's a success response with JSON data
-            setResponse(data)
-          }
+        // Check if it's an error response with status: false
+        if (data.status === false) {
+          setError(data.message || "Request failed");
         } else {
-          // Success response with no body (status 200)
-          setResponse({
-            success: true,
-            message: "Request processed successfully!",
-            timestamp: new Date().toISOString(),
-          })
+          setResponse(data);
         }
       } else {
-        throw new Error(`HTTP error! status: ${apiResponse.status}`)
+        setError(data.message || `HTTP error! status: ${apiResponse.status}`);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An unexpected error occurred")
@@ -71,7 +60,7 @@ export default function MetaAndKeywordPage() {
     }
   }
 
-  const isFormValid = formData.sheetURL.trim() !== ""
+  const isFormValid = formData.sheetURL.trim() !== "" && formData.documentURL.trim() !== ""
 
   return (
     <div className="min-h-screen flex w-full items-center justify-center bg-gray-50">
@@ -79,6 +68,18 @@ export default function MetaAndKeywordPage() {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Meta & Keyword Generator</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-gray-700 mb-1 font-medium">Document URL</label>
+            <input
+              type="text"
+              value={formData.documentURL}
+              onChange={(e) => handleInputChange("documentURL", e.target.value)}
+              className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter document URL"
+              required
+              disabled={isLoading}
+            />
+          </div>
           <div>
             <label className="block text-gray-700 mb-1 font-medium">Sheet URL</label>
             <input
