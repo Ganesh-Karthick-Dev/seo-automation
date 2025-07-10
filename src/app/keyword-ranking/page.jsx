@@ -32,7 +32,7 @@ export default function KeywordRankingPage() {
 
     try {
       const apiResponse = await fetch(
-        "https://webnoxdigital.app.n8n.cloud/webhook-test/409ee188-ad4d-4528-a8d0-2e77077c9864",
+        "https://webnoxdigital.app.n8n.cloud/webhook/409ee188-ad4d-4528-a8d0-2e77077c9864",
         {
           method: "POST",
           headers: {
