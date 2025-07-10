@@ -7,7 +7,7 @@ import { Input } from "../../components/ui/input.jsx"
 import { Label } from "../../components/ui/label.jsx"
 import { Badge } from "../../components/ui/badge.jsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../components/ui/dropdown-menu.jsx"
-import { Loader2, Building2, Globe, Mail, Phone, MapPin, Clock, Tag, CheckCircle, AlertCircle, ChevronDown } from "lucide-react"
+import { Loader2, Building2, Globe, Mail, Phone, MapPin, Clock, Tag, CheckCircle, AlertCircle, ChevronDown, Lock } from "lucide-react"
 import { saveAs } from "file-saver"
 
 
@@ -497,6 +497,7 @@ export default function BusinessForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [response, setResponse] = useState(null)
   const [error, setError] = useState(null)
+console.log("formData",response);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -559,7 +560,6 @@ export default function BusinessForm() {
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
-    setResponse(null)
 
     try {
       // Create a modified version of formData with only category labels
@@ -568,20 +568,20 @@ export default function BusinessForm() {
         categories: formData.categories.map(cat => cat.label)
       }
 
-      const response = await fetch("https://webnoxdigital.app.n8n.cloud/webhook/64c0df4c-3c91-4ba9-9965-1fd9ab656978", {
+      // Set immediate response
+      setResponse({
+        status: "initiated",
+        message: "Your request has been initiated. Please check the document for updates."
+      })
+
+      // Make API call in background without waiting
+      fetch("https://webnoxdigital.app.n8n.cloud/webhook-test/64c0df4c-3c91-4ba9-9965-1fd9ab656978", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(submissionData),
       })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const data = await response.json()
-      setResponse(data)
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred while submitting the form")
     } finally {
@@ -603,27 +603,40 @@ export default function BusinessForm() {
     }
   }
 
+  // Function to check if all required fields are filled
+  const isFormValid = () => {
+    return (
+      formData.businessName.trim() !== "" &&
+      formData.categories.length > 0 &&
+      formData.description.trim() !== "" &&
+      formData.email.trim() !== "" &&
+      formData.phone.trim() !== "" &&
+      formData.address.trim() !== "" &&
+      formData.city.trim() !== "" &&
+      formData.state.trim() !== "" &&
+      formData.country.trim() !== "" &&
+      formData.keywords.length > 0 &&
+      formData.documentUrl.trim() !== "" &&
+      formData.sheet1Url.trim() !== "" &&
+      formData.sheet2Url.trim() !== ""
+    )
+  }
+
   if (response) {
     return (
       <div className="min-h-screen bg-gradient-to-br bg-white w-full p-4">
         <div className="max-w-2xl mx-auto pt-8">
-          <Card className="border-green-200 bg-green-50">
+          <Card className="border-blue-200 bg-blue-50">
             <CardHeader className="text-center">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle className="w-8 h-8 text-blue-600" />
               </div>
-              <CardTitle className="text-green-800">Submission Successful!</CardTitle>
-              <CardDescription className="text-green-600">
-                Your business data has been submitted successfully.
+              <CardTitle className="text-blue-800">Request Initiated!</CardTitle>
+              <CardDescription className="text-blue-600">
+                Your business data submission has been initiated. Please check the document for updates.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white rounded-lg p-4 border">
-                <h3 className="font-semibold mb-2 text-gray-800">Response:</h3>
-                <pre className="text-sm text-gray-600 whitespace-pre-wrap overflow-auto">
-                  {JSON.stringify(response, null, 2)}
-                </pre>
-              </div>
               <Button
                 onClick={() => {
                   setResponse(null)
@@ -641,6 +654,9 @@ export default function BusinessForm() {
                     postalCode: "",
                     hours: "",
                     keywords: [],
+                    documentUrl: "",
+                    sheet1Url: "",
+                    sheet2Url: "",
                   })
                 }}
                 className="w-full mt-4"
@@ -993,7 +1009,7 @@ export default function BusinessForm() {
           <div className="mt-8 flex justify-center">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isFormValid()}
               className="w-full max-w-md bg-blue-600 hover:bg-blue-700"
               size="lg"
             >
@@ -1001,6 +1017,11 @@ export default function BusinessForm() {
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Submitting...
+                </>
+              ) : !isFormValid() ? (
+                <>
+                  <Lock className="mr-2 h-4 w-4" />
+                  Fill all required fields
                 </>
               ) : (
                 "Submit Business Information"
